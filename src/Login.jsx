@@ -2,20 +2,33 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const IMAGE_URL = 'https://static.vecteezy.com/system/resources/previews/012/390/637/original/inventory-control-illustration-concept-professional-worker-is-checking-goods-on-shelve-for-inventory-management-vector.jpg';
-
-const LoginForm = ({ onSubmit, error }) => {
+const LoginForm = ({ onSubmit, error, setError }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    onSubmit({ username, password });
+    try {
+      const response = await axios.post('http://localhost:8080/api/auth/login', {
+        username,
+        password,
+      });
+      setMessage(response.data); 
+      navigate('/home'); 
+      setError(null); 
+    } catch (error) {
+      setMessage('Login failed: ' + (error.response ? error.response.data : 'Unknown error')); 
+      setError('Invalid username or password.'); 
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleLogin}>
       <div className="mb-3">
         <input
           type="text"
@@ -44,30 +57,6 @@ const LoginForm = ({ onSubmit, error }) => {
 
 const App = () => {
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
-
-  const handleLogin = async (credentials) => {
-    try {
-      const response = await fetch('https://your-api-url.com/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-       
-        localStorage.setItem('token', data.token);
-        navigate('/dashboard');
-      } else {
-        setError('Invalid credentials');
-      }
-    } catch (error) {
-      setError('An error occurred while logging in');
-    }
-  };
 
   return (
     <div className="container-fluid vh-100">
@@ -77,7 +66,8 @@ const App = () => {
           <p className="lead mb-5">Streamline your inventory with precision and ease.</p>
           <div className="login-form w-75 border rounded shadow p-4">
             <h2 className="mb-4 text-secondary">Login</h2>
-            <LoginForm onSubmit={handleLogin} error={error} />
+            
+            <LoginForm error={error} setError={setError} /> {/* Pass setError down */}
           </div>
         </div>
         <div className="col-md-6 d-none d-md-block p-0 order-md-1">
