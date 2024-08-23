@@ -10,7 +10,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css';
 import { Link } from 'react-router-dom';
-
 function Sidebar() {
   const navigate = useNavigate();
 
@@ -19,7 +18,11 @@ function Sidebar() {
   };
 
   return (
-    <Navbar bg="dark" variant="dark" className="flex-column vh-100 p-0" style={{ width: '250px' }}>
+    <Navbar
+      bg="dark"
+      variant="dark"
+      className="flex-column p-0 sticky-sidebar"
+    >
       <Navbar.Brand className="mx-auto my-3">
         <i className="bi bi-kanban-fill"></i> Dashboard
       </Navbar.Brand>
@@ -31,7 +34,7 @@ function Sidebar() {
         </Nav.Item>
         <Nav.Item className="w-100">
           <Nav.Link as={Link} to="/products" className="text-light px-4 py-3">
-            <i className="bi bi-speedometer2 me-2"></i> Products
+            <i className="bi bi-box me-2"></i> Products
           </Nav.Link>
         </Nav.Item>
         <Nav.Item className="w-100">
@@ -48,6 +51,8 @@ function Sidebar() {
     </Navbar>
   );
 }
+
+
 
 function App() {
   return (
